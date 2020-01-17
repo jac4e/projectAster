@@ -37,6 +37,8 @@ var animate = function () {
     cube.rotation.y += 0.01;
     keyControls();
     renderer.render( scene, camera );
+
+    keyControls();
 };
 
 animate();
