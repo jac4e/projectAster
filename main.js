@@ -17,7 +17,7 @@ function init() {
 
     document.body.appendChild(renderer.domElement);
 
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    var directionalLight = new THREE.DirectionalLight(0xaaaaaa, 10);
     scene.add(directionalLight);
 
     var geometry = new THREE.BoxGeometry(1, 1, 1);
