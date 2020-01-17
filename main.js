@@ -37,15 +37,19 @@ function keyControls(){
         }
     }
 };
-var animate = function () {
-    requestAnimationFrame( animate );
 
-cube.rotation.x += 0.01;
-   cube.rotation.y += 0.01;
+function update(){
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
     keyControls();
+}
+
+function render(){
     renderer.render( scene, camera );
-
-    keyControls();
 };
 init();
-animate();
+
+renderer.setAnimationLoop( () => {
+    update();
+    render();
+})
