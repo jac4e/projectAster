@@ -38,8 +38,10 @@ function update(){
 }
 
 function render(){
-    requestAnimationFrame( animate );
     renderer.render( scene, camera );
 };
 
-animate();
+renderer.setAnimationLoop( () => {
+    update();
+    render();
+})
