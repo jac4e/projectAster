@@ -5,6 +5,8 @@ let cube;
 let floor;
 let player;
 let ground;
+let bgMesh;
+let bgScene;
 var KEY_W = false;
 var KEY_A = false;
 var KEY_S = false;
@@ -79,14 +81,16 @@ function init() {
     gameCanvas.requestPointerLock = gameCanvas.requestPointerLock || gameCanvas.mozRequestPointerLock;
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x8FBCD4);
 
-    player = new Player(0, 10, 25);
-    ground = new Ground(0, 0, 0, 5, 5, 0);
+    player = new Player(0, 0, 2);
+    // ground = new Ground(0, 0, 0, 20, 20, 0);
+    ground = new Block(0,0,0);
 
     renderer = new THREE.WebGLRenderer({
         canvas: game
     });
+
+    renderer.autoClearColor = false;
 
     renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -102,22 +106,28 @@ function init() {
     var directionalLight = new THREE.DirectionalLight(0xaaaaaa, 10);
     scene.add(directionalLight);
 
-    var geometry = new THREE.BoxGeometry(1, 1, 1);
-    var material = new THREE.MeshStandardMaterial({
-        color: 0x00ff00
+    // Adds skybox
+    bgScene = new THREE.Scene();
+    var loader = new THREE.TextureLoader();
+    var texture = loader.load(
+        '/img/sky.png',
+    );
+    texture.magFilter = THREE.LinearFilter;
+    texture.minFilter = THREE.LinearFilter;
+
+    var shader = THREE.ShaderLib.equirect;
+    var material2 = new THREE.ShaderMaterial({
+        fragmentShader: shader.fragmentShader,
+        vertexShader: shader.vertexShader,
+        uniforms: shader.uniforms,
+        depthWrite: false,
+        side: THREE.BackSide,
     });
-    cube = new THREE.Mesh(geometry, material);
-    cube.position.set(0, 2, 0);
-    scene.add(cube);
-
-    // var floorGeometry = new THREE.BoxGeometry(25, 2, 25);
-    // var floorMaterial = new THREE.MeshStandardMaterial({
-    //     color: 0x00ff0f
-    // });
-    // floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    // floor.position.set(-1, -1, -1);
-    // scene.add(floor);
-
+    material2.uniforms.tEquirect.value = texture;
+    var plane = new THREE.BoxBufferGeometry(2, 2, 2);
+    bgMesh = new THREE.Mesh(plane, material2);
+    bgScene.add(bgMesh);
+    
 };
 
 function pause(e) {
@@ -153,12 +163,12 @@ function controls() {
 }
 
 function update() {
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
     controls()
 }
 
 function render() {
+    bgMesh.position.copy(camera.position);
+    renderer.render(bgScene, camera);
     renderer.render(scene, camera);
 };
 init();
