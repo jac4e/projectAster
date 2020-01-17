@@ -16,13 +16,13 @@ function keyControls(){
     document.onkeydown = function(e) {
         switch (e.keyCode){
             case 37: //Left
-                camera.rotateY(0.1);
+                camera.rotateY(-0.1);
                 break;
             case 38: //Up
                 camera.rotateX(-0.1);
                 break;
             case 39: //Right
-                camera.rotateY(-0.1);
+                camera.rotateY(0.1);
                 break;
             case 40: //Down
                 camera.rotateX(0.1);
@@ -35,7 +35,7 @@ var animate = function () {
 
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
-
+    keyControls();
     renderer.render( scene, camera );
 };
 
