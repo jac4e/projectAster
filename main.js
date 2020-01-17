@@ -12,6 +12,24 @@ scene.add( cube );
 
 camera.position.z = 5;
 
+function keyControls(){
+    document.onkeydown = function(e) {
+        switch (e.keyCode){
+            case 37: //Left
+                camera.rotateY(0.1);
+                break;
+            case 38: //Up
+                camera.rotateX(-0.1);
+                break;
+            case 39: //Right
+                camera.rotateY(-0.1);
+                break;
+            case 40: //Down
+                camera.rotateX(0.1);
+                break;
+        }
+    }
+};
 var animate = function () {
     requestAnimationFrame( animate );
 
