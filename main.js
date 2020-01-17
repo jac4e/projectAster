@@ -30,15 +30,16 @@ function keyControls(){
         }
     }
 };
-var animate = function () {
-    requestAnimationFrame( animate );
 
+function update(){
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
     keyControls();
-    renderer.render( scene, camera );
+}
 
-    keyControls();
+function render(){
+    requestAnimationFrame( animate );
+    renderer.render( scene, camera );
 };
 
 animate();
