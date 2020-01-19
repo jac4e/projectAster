@@ -13,7 +13,6 @@ class Player {
         camera.translateZ(z*this.maxSpeed);
     }
     mouseMove(e) {
-        console.log(e)
         if (p == false) {
             var euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
             euler.setFromQuaternion( camera.quaternion );
@@ -23,7 +22,6 @@ class Player {
             
             euler.y -= e.movementX/maxX * Math.PI/2 
             euler.x -= e.movementY/maxY * Math.PI/2
-            console.log(euler)
             euler.x = Math.max( - Math.PI/2, Math.min( Math.PI/2, euler.x ) );
             camera.quaternion.setFromEuler( euler );
         }

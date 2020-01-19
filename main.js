@@ -18,35 +18,47 @@ var p = true;
 var prevTime = performance.now();
 
 function keyDown(e) {
-    switch (e.key) {
-        case 'w': //W
+    switch (e.code) {
+        case 'KeyW':
             moveForward = true;
             break;
-        case 'a': //A
+        case 'KeyA':
             moveLeft = true;
             break;
-        case 's': //S
+        case 'KeyS':
             moveBackward = true;
             break;
-        case 'd': //D
+        case 'KeyD':
             moveRight = true;
+            break;
+        case 'Space':
+            moveUp = true;
+            break;
+        case 'ShiftLeft':
+            moveDown = true;
             break;
     }
 }
 
 function keyUp(e) {
-    switch (e.key) {
-        case 'w': //W
+    switch (e.code) {
+        case 'KeyW':
             moveForward = false;
             break;
-        case 'a': //A
+        case 'KeyA':
             moveLeft = false;
             break;
-        case 's': //S
+        case 'KeyS':
             moveBackward = false;
             break;
-        case 'd': //D
+        case 'KeyD':
             moveRight = false;
+            break;
+        case 'Space':
+            moveUp = false;
+            break;
+        case 'ShiftLeft':
+            moveDown = false;
             break;
     }
 }
@@ -114,8 +126,6 @@ function init() {
 };
 
 function pause(e) {
-    console.log(e);
-
     if (document.pointerLockElement === gameCanvas ||
         document.mozPointerLockElement === gameCanvas) {
         p = false;
