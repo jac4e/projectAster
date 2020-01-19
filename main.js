@@ -7,66 +7,47 @@ let player;
 let ground;
 let bgMesh;
 let bgScene;
-var KEY_W = false;
-var KEY_A = false;
-var KEY_S = false;
-var KEY_D = false;
-var KEY_SPACE = false;
-var KEY_SHIFT = false;
+let time;
+var moveForward= false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
+var moveUp = false;
+var moveDown = false;
 var p = true;
+var prevTime = performance.now();
 
 function keyDown(e) {
     switch (e.key) {
         case 'w': //W
-            KEY_W = true;
+            moveForward = true;
             break;
         case 'a': //A
-            KEY_A = true;
+            moveLeft = true;
             break;
         case 's': //S
-            KEY_S = true;
+            moveBackward = true;
             break;
         case 'd': //D
-            KEY_D = true;
-            break;
-        case ' ': //S
-            KEY_S = true;
-            break;
-        case 'Shift': //D
-            KEY_D = true;
+            moveRight = true;
             break;
     }
-    console.log('down', KEY_W)
 }
 
 function keyUp(e) {
     switch (e.key) {
         case 'w': //W
-            KEY_W = false;
+            moveForward = false;
             break;
         case 'a': //A
-            KEY_A = false;
+            moveLeft = false;
             break;
         case 's': //S
-            KEY_S = false;
+            moveBackward = false;
             break;
         case 'd': //D
-            KEY_D = false;
+            moveRight = false;
             break;
-        case ' ': //S
-            KEY_S = false;
-            break;
-        case 'Shift': //D
-            KEY_D = false;
-            break;
-    }
-    console.log('up', e.key)
-}
-
-function mouseMove(e) {
-    if (p == false) {
-        console.log(e.movementX, e.movementY);
-        player.control(0, 0, 0, (e.movementY / -50) * 0.0174533, (e.movementX / -50) * 0.0174533, 0)
     }
 }
 
@@ -84,7 +65,7 @@ function init() {
 
     player = new Player(0, 0, 2);
     // ground = new Ground(0, 0, 0, 20, 20, 0);
-    ground = new Block(0,0,0);
+    ground = new Block(0, 0, 0);
 
     renderer = new THREE.WebGLRenderer({
         canvas: game
@@ -97,7 +78,7 @@ function init() {
     //Mouse and Keyboard control listeners
     document.addEventListener('keydown', keyDown);
     document.addEventListener('keyup', keyUp);
-    document.addEventListener('mousemove', mouseMove);
+    document.addEventListener('mousemove', player.mouseMove);
     document.addEventListener("click", mouseClick);
 
     //For future use when we implement a pause menu
@@ -127,7 +108,9 @@ function init() {
     var plane = new THREE.BoxBufferGeometry(2, 2, 2);
     bgMesh = new THREE.Mesh(plane, material2);
     bgScene.add(bgMesh);
-    
+
+    var axesHelper = new THREE.AxesHelper(5);
+    scene.add(axesHelper);
 };
 
 function pause(e) {
@@ -141,29 +124,10 @@ function pause(e) {
     }
 }
 
-function controls() {
-    if (KEY_W) {
-        player.control(0, 0, -1, 0, 0, 0)
-    }
-    if (KEY_A) {
-        player.control(-1, 0, 0, 0, 0, 0)
-    }
-    if (KEY_S) {
-        player.control(0, 0, 1, 0, 0, 0)
-    }
-    if (KEY_D) {
-        player.control(1, 0, 0, 0, 0, 0)
-    }
-    if (KEY_SPACE) {
-        player.control(0, 1, 0, 0, 0, 0)
-    }
-    if (KEY_SHIFT) {
-        player.control(0, -1, 0, 0, 0, 0)
-    }
-}
-
 function update() {
-    controls()
+    var delta = ( time - prevTime ) / 1000;
+    player.control(Number(moveRight)-Number(moveLeft),Number(moveUp)-Number(moveDown),Number(moveBackward)-Number(moveForward),delta);
+    prevTime = time
 }
 
 function render() {

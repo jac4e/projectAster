@@ -1,5 +1,7 @@
-class Block{
-    constructor(posX,posY,posZ){
+// Check this site on voxels in three.js https://threejsfundamentals.org/threejs/lessons/threejs-voxel-geometry.html
+
+class Block {
+    constructor(posX, posY, posZ) {
         this.pos = new THREE.Vector3(posX, posY, posZ);
         this.side = 1;
         this.geometry = new THREE.BoxGeometry(this.side, this.side, this.side);
