@@ -60,6 +60,48 @@ class Chunk {
 }
 
 
-function generateWorld(){
+let bgMesh;
+let bgScene;
 
+class World {
+    constructor() {
+        var sunHemi = new THREE.HemisphereLight(0xaaaaaa, 10);
+        var sunDirectional = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+        scene.add(sunHemi);
+        scene.add(sunDirectional);
+
+        bgScene = new THREE.Scene();
+        var loader = new THREE.TextureLoader();
+        var texture = loader.load(
+            '/img/sky.png',
+        );
+        texture.magFilter = THREE.LinearFilter;
+        texture.minFilter = THREE.LinearFilter;
+
+        var shader = THREE.ShaderLib.equirect;
+        var material2 = new THREE.ShaderMaterial({
+            fragmentShader: shader.fragmentShader,
+            vertexShader: shader.vertexShader,
+            uniforms: shader.uniforms,
+            depthWrite: false,
+            side: THREE.BackSide,
+        });
+        material2.uniforms.tEquirect.value = texture;
+        var plane = new THREE.BoxBufferGeometry(2, 2, 2);
+        bgMesh = new THREE.Mesh(plane, material2);
+        bgScene.add(bgMesh);
+
+        // Adds in game colored axis to help with directions
+        var axesHelper = new THREE.AxesHelper(5);
+        scene.add(axesHelper);
+
+        //Creates ground
+        ground = new Chunk(0, 0, 0);
+    }
+    update() {
+        bgMesh.position.copy(camera.position);
+    }
+    render() {
+        renderer.render(bgScene, camera);
+    }
 }
