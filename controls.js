@@ -1,3 +1,6 @@
+// Will need to add mouse movement controls to here and add custom event listeners for each control type
+// then those can be be added to functino in player.js or wherever else needed
+
 class Controls {
     constructor() {
         canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
@@ -9,7 +12,7 @@ class Controls {
         document.addEventListener("click", this.mouseClick);
         document.addEventListener('pointerlockchange', this.pause); //For future use when we implement a pause menu
     }
-    
+
     keyDown(e) {
         if (p == false) {
             switch (e.code) {

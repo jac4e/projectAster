@@ -13,10 +13,11 @@ class Player {
     }
     mouseMove(e) {
         if (p == false) {
-            var euler = new THREE.Euler(0, 0, 0, 'YXZ');
+            requestRender();
+            let euler = new THREE.Euler(0, 0, 0, 'YXZ');
             euler.setFromQuaternion(camera.quaternion);
-            var maxY = window.innerHeight / 2;
-            var maxX = window.innerWidth / 2;
+            let maxY = window.innerHeight / 2;
+            let maxX = window.innerWidth / 2;
             euler.y -= e.movementX / maxX * Math.PI / 2
             euler.x -= e.movementY / maxY * Math.PI / 2
             euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
