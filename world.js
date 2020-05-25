@@ -158,7 +158,7 @@ class World {
         bgScene = new THREE.Scene();
         let loader = new THREE.TextureLoader();
         let texture = loader.load(
-            '/img/sky.png',
+            'https://localhost:8080/img/sky.png',
         );
         texture.magFilter = THREE.LinearFilter;
         texture.minFilter = THREE.LinearFilter;
@@ -183,8 +183,10 @@ class World {
         //Creates ground
         ground = new Chunk(0, 0, 0);
     }
+    updateBackground(position){
+        bgMesh.position.copy(position);
+    }
     render() {
-        bgMesh.position.copy(camera.position);
         renderer.render(bgScene, camera);
     }
 }
