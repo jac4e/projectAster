@@ -15,12 +15,9 @@ class Controls {
         document.addEventListener('keydown', this.keyDown.bind(this));
         document.addEventListener('keyup', this.keyUp.bind(this));
         document.addEventListener("click", this.mouseClick.bind(this));
-        //document.addEventListener('pointerlockchange', this.pause); For future use when we implement a pause menu
-
     }
 
     keyDown(e) {
-        console.log(this)
         switch (e.code) {
             case 'KeyW':
                 this.moveForward = true;
@@ -67,7 +64,7 @@ class Controls {
     }
 
     get movementVector(){
-        return new THREE.Vector3(Number(this.moveRight) - Number(this.moveLeft), Number(this.moveUp) - Number(this.moveDown), Number(this.moveBackward) - Number(this.moveForward));
+        return new THREE.Vector3(Number(this.moveRight) - Number(this.moveLeft), Number(this.moveUp) - Number(this.moveDown), Number(this.moveBackward) - Number(this.moveForward)).multiplyScalar(10);
     }
 
     mouseClick(e) {
