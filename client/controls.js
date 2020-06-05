@@ -14,9 +14,13 @@ export default class Controls {
         this.moveUp = false
         this.moveDown = false
         canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
-        document.addEventListener('keydown', this.keyDown.bind(this));
-        document.addEventListener('keyup', this.keyUp.bind(this));
-        document.addEventListener("click", this.mouseClick.bind(this));
+        canvas.onclick = () => {
+            canvas.requestPointerLock()
+        }
+        this.mouseMoveBind = this.mouseMove.bind(this)
+        document.addEventListener('keydown', this.keyDown.bind(this))
+        document.addEventListener('keyup', this.keyUp.bind(this))
+        document.addEventListener("pointerlockchange", this.pointerLockChange.bind(this), false)
     }
 
     keyDown(e) {
@@ -65,19 +69,25 @@ export default class Controls {
         }
     }
 
-    get movementVector(){
+    get movementVector() {
         return new THREE.Vector3(Number(this.moveRight) - Number(this.moveLeft), Number(this.moveUp) - Number(this.moveDown), Number(this.moveBackward) - Number(this.moveForward)).multiplyScalar(10);
     }
-
-    mouseClick(e) {
-        canvas.requestPointerLock()
-    }
+    
     mouseMove(e) {
-        // Set player rotation euler and quarternion only
+        // Set player rotation euler and quaternion only
         let maxY = window.innerHeight / 2
         let maxX = window.innerWidth / 2
         this.object.rotation.y -= ((e.movementX / maxX) * Math.PI) / 2
         this.object.rotation.x -= ((e.movementY / maxY) * Math.PI) / 2
         this.object.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.object.rotation.x))
+    }
+    pointerLockChange() {
+        if (document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {
+            console.log("Pointer Lock")
+            document.addEventListener('mousemove', this.mouseMoveBind, false)
+        } else {
+            console.log("Pointer Unlock")
+            document.removeEventListener('mousemove', this.mouseMoveBind, false)
+        }
     }
 }
