@@ -1,7 +1,10 @@
 // Will need to add mouse movement controls to here and add custom event listeners for each control type
-// then those can be be added to functino in player.js or wherever else needed
+// then those can be be added to function in player.js or wherever else needed
+import * as THREE from '/lib/three.module.js'
 
-class Controls {
+let canvas = document.querySelector("body > canvas")
+
+export default class Controls {
     constructor(object) {
         this.object = object
         this.moveForward = false
@@ -11,7 +14,6 @@ class Controls {
         this.moveUp = false
         this.moveDown = false
         canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
-        let self = this
         document.addEventListener('keydown', this.keyDown.bind(this));
         document.addEventListener('keyup', this.keyUp.bind(this));
         document.addEventListener("click", this.mouseClick.bind(this));

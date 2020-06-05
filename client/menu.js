@@ -1,4 +1,6 @@
-class Menu {
+import * as THREE from '/lib/three.module.js'
+
+export class Menu {
     constructor(name) {
         this.heading = document.createElement("h1")
         this.heading.textContent = name
@@ -28,7 +30,7 @@ class Menu {
     }
 
 }
-class Label {
+export class Label {
     constructor() {
         this.label = document.createElement('div');
         this.label.style.position = 'absolute';
@@ -48,7 +50,7 @@ class Label {
             this.label.innerHTML = this.label.innerHTML + `<li>${text}</li>`
         })
     }
-    updatePosition(objectPosition) {
+    updatePosition(objectPosition,camera) {
         let vector = objectPosition.clone().project(camera)
         if (vector.z > 1) {
             this.label.style.zIndex = "-1"

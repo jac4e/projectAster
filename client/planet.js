@@ -1,5 +1,6 @@
-let test = 1
-class Planet extends physicsObject{
+import * as THREE from '/lib/three.module.js'
+import physicsObject from '/physicsEngine.js'
+export default class Planet extends physicsObject{
     constructor(radius, mass, startPos) {
         super(false) // route spawn into physicsObject
         this.radius = radius
@@ -10,8 +11,6 @@ class Planet extends physicsObject{
         })
         let sphere = new THREE.Mesh(geometry, material);
         this.attach(sphere)
-        
-        scene.add(this)
         this.position.copy(startPos)
         // this.velocity.copy(startPos.negate().divideScalar(30))
         console.log(`physicsObject:spawned ${this.uuid} at ${startPos.x} ${startPos.y} ${startPos.z}`)

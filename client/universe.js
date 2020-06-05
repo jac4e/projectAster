@@ -1,7 +1,9 @@
+import * as THREE from '/lib/three.module.js'
+
 let skybox
 let skyboxMesh
-class Universe {
-    constructor() {
+export default class Universe {
+    constructor(scene) {
         let sunHemi = new THREE.HemisphereLight(0xaaaaaa, 10);
         let sunDirectional = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
         scene.add(sunHemi);
@@ -35,7 +37,7 @@ class Universe {
     updateSkybox(position){
         skyboxMesh.position.copy(position);
     }
-    render() {
+    render(renderer, camera) {
         renderer.render(skybox, camera);
     }
 }

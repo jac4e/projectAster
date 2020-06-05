@@ -1,19 +1,29 @@
+import * as THREE from '/lib/three.module.js'
+import * as physicsEngine from '/physicsEngine.js'
+import Player from '/player.js'
+import Planet from '/planet.js'
+import Universe from '/universe.js'
+import * as UI from '/menu.js'
+import Controls from '/controls.js'
+
 let scene
-let world
 let camera
 let renderer
 let player
-let ground
 let canvas
-
+let universe
+let planets
+let controls
+let debugMenu
+let fps
 let clock = new THREE.Clock()
 
 let n = 3
 
 function init() {
     //Get html5 canvas and set pointer lock references
-    canvas = document.querySelector('#game')
-
+    canvas = document.querySelector("body > canvas")
+    console.log(canvas)
     scene = new THREE.Scene()
 
     // Initialize Camera
@@ -35,7 +45,7 @@ function init() {
     // will need to add autosize
 
     //Game stuff
-    universe = new Universe()
+    universe = new Universe(scene)
     planets = new Array(n)
     // for (let i = 0; i<n;i++){
     //     let x = Math.floor(Math.random() * 200) - 100
@@ -50,17 +60,18 @@ function init() {
     // //planets[0].velocity.copy(new THREE.Vector3(x*-0.5,y*-0.5,0))
     planets[1] = new Planet(5, 10, new THREE.Vector3(0, 0, 0))
     // //planets[1].velocity.copy(new THREE.Vector3(x,y,0))
-    planets[2] = new Planet(5, 10, new THREE.Vector3(35, 0, 0))
+     planets[2] = new Planet(5, 10, new THREE.Vector3(-7, 10, 0))
     // //planets[2].velocity.copy(new THREE.Vector3(x*-0.5,y*-0.5,0))
     planets.forEach((planet) => {
-        planet.label = new Label()
+        planet.label = new UI.Label()
+        scene.add(planet)
     })
     player = new Player(0, 0, 50)
     controls = new Controls(player)
     document.addEventListener('mousemove', (e) => {
         controls.mouseMove(e)
     })
-    debugMenu = new Menu("Debug")
+    debugMenu = new UI.Menu("Debug")
     fps = debugMenu.addText("FPS:")
     debugMenu.insert()
 }
@@ -73,7 +84,7 @@ function update() {
 
 function fixedUpdate() {
     //update camera quaternion from players
-    physicsObject.updateState()
+    physicsEngine.updateState()
     player.velocity.copy(controls.movementVector.applyEuler(player.rotation).multiplyScalar(1))
     camera.updateMatrixWorld()
     let decimalPlace = 4
@@ -82,13 +93,13 @@ function fixedUpdate() {
         `POS: ${planet.position.x.toFixed(decimalPlace)} ${planet.position.y.toFixed(decimalPlace)} ${planet.position.z.toFixed(decimalPlace)}\n`,
         `VEL: ${planet.velocity.x.toFixed(decimalPlace)} ${planet.velocity.y.toFixed(decimalPlace)} ${planet.velocity.z.toFixed(decimalPlace)}\n`,
         `ACC: ${planet.acceleration.x.toFixed(decimalPlace)} ${planet.acceleration.y.toFixed(decimalPlace)} ${planet.acceleration.z.toFixed(decimalPlace)}\n`])
-        planet.label.updatePosition(planet.position)
+        planet.label.updatePosition(planet.position, camera)
     })
 }
 
 function render() {
     debugMenu.updateText(`FPS: ${(1/clock.getDelta()).toFixed(2)}`, fps)
-    universe.render()
+    universe.render(renderer, camera)
     renderer.render(scene, camera)
 }
 
