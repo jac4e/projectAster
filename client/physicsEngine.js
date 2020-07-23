@@ -1,15 +1,10 @@
 import * as THREE from '/lib/three.module.js'
 
-let physicsObjects = []
+export let objectArray = []
 const zeroVector = new THREE.Vector3(0, 0, 0)
 const g = 0.3
 const deltaTime = 0.05
-//Colliders
-// class ColliderSphere extends THREE.Object3D{
-//     constructor(r){
-//         this.radius =
-//     }
-// }
+
 function calculateGravity(objectA, objectB) {
     let positionVector = objectB.position.clone().sub(objectA.position)
     let magnitude = g * (objectA.mass * objectB.mass) / objectA.position.distanceToSquared(objectB.position)
@@ -18,14 +13,18 @@ function calculateGravity(objectA, objectB) {
     objectB.addForce(`gravity-${objectA.uuid}`, deltaForce.negate())
 }
 export function updateState() {
-    let physicsObjectArray = [...physicsObjects];
+    // Creates copy physicsObjectArray of the objectArray and pops each
+    // The physicsObjectArray then serves as an array of objects yet to simulated
+    // This allows us to simulate the interactions between each physics object only once
+    // Probably can be done differently, need to look into that
+    let physicsObjectArray = [...objectArray];
     let loopAmt = physicsObjectArray.length
     for (let i = 0; i < loopAmt; i++) {
         let object = physicsObjectArray.pop()
         // sum all forces of object
         let totalForce = zeroVector.clone()
-        for (const [key, value] of Object.entries(object.forces)) {
-            totalForce.add(value)
+        for (const [name, force] of Object.entries(object.forces)) {
+            totalForce.add(force)
         }
         // update objects acceleration and velocity
         object.acceleration.copy(totalForce.clone().divideScalar(object.mass))
@@ -37,54 +36,39 @@ export function updateState() {
             if (!(object.player) && !(objectB.player)) {
                 let position = objectB.position.clone().sub(object.position)
                 let distance = position.length()
-                let noGo = object.radius + objectB.radius
-                if (distance < noGo) {
-                    // Lerp forward until objects are touching
-                    let moveDistance = object.position.distanceTo(newPosition)
-                    //object.position.lerp(newPosition, 1 - (noGo - distance) / moveDistance)
+
+                //Check to consider collision
+                if (distance < object.radius + objectB.radius) {
+                    console.log(distance)
+                    // Compute relative velocities, if close to zero, do not compute the following
+                    const relVel = objectB.velocity.clone().sub(object.velocity)
+                    console.log(relVel.length)
                     // Collision Resolution
-                    let coefficientOfRestitution = 0.1
-                    let massOneCoefficient = 2 * objectB.mass / (object.mass + objectB.mass)
-                    let massTwoCoefficient = 2 * object.mass / (object.mass + objectB.mass)
-                    let centerOne = object.position.clone().sub(objectB.position)
-                    let centerTwo = objectB.position.clone().sub(object.position)
-                    let vectorOneDot = object.velocity.clone().sub(objectB.velocity).dot(centerOne)
-                    let vectorTwoDot = objectB.velocity.clone().sub(object.velocity).dot(centerTwo)
-                    object.velocity.sub(centerOne.multiplyScalar(massOneCoefficient * vectorOneDot / (centerOne.lengthSq()))).multiplyScalar(coefficientOfRestitution)
-                    objectB.velocity.sub(centerTwo.multiplyScalar(massTwoCoefficient * vectorTwoDot / (centerTwo.lengthSq()))).multiplyScalar(coefficientOfRestitution)
+                    
+                    let coefficientOfRestitution = 0.8
+                    const normal = objectB.position.clone().sub(object.position)
+                    object.velocity.sub(object.velocity.clone().projectOnVector(normal).multiplyScalar(1+coefficientOfRestitution))
+                    objectB.velocity.sub(objectB.velocity.clone().projectOnVector(normal).multiplyScalar(1+coefficientOfRestitution))
+
                     // Normal Forces
-                    let externalA = zeroVector.clone() // External force applied on A
                     let normalA = zeroVector.clone() // Normal force applied on A
-                    let externalB = zeroVector.clone() // ditto
                     let normalB = zeroVector.clone() // ditto
                     for (const [name, force] of Object.entries(object.forces)) {
-                        if (name.includes("gravity")) {
-                            if (name.includes(`gravity-${objectB.uuid}`)) {
-                                normalA = force.clone().projectOnVector(position).negate()
-                            } else {
-                                externalB.add(force)
-                            }
+                        if (!name.includes("normal")) {
+                            normalA.add(force.clone())
                         }
                     }
                     for (const [name, force] of Object.entries(objectB.forces)) {
-                        if (name.includes("gravity")) {
-                            if (name.includes(`gravity-${object.uuid}`)) {
-                                normalB = force.clone().projectOnVector(position).negate()
-                            } else {
-                                externalA.add(force)
-                            }
+                        if (!name.includes("normal")) {
+                             normalB.add(force.clone())
                         }
                     }
-                    object.addForce(`normal-${objectB.uuid}`, normalA)
-                    objectB.addForce(`normal-${object.uuid}`, normalB)
-                    object.addForce(`external-${objectB.uuid}`, externalA.projectOnVector(position).negate())
-                    objectB.addForce(`external-${object.uuid}`, externalB.projectOnVector(position))
+                    object.addForce(`normal-${objectB.uuid}`, normalA.projectOnVector(position).negate())
+                    objectB.addForce(`normal-${object.uuid}`, normalB.projectOnVector(position).negate())
                 } else {
                     // Set Normal Forces to Zero
                     object.addForce(`normal-${objectB.uuid}`, zeroVector.clone())
                     objectB.addForce(`normal-${object.uuid}`, zeroVector.clone())
-                    object.addForce(`external-${objectB.uuid}`, zeroVector.clone())
-                    objectB.addForce(`external-${object.uuid}`, zeroVector.clone())
                 }
                 calculateGravity(object, objectB)
             }
@@ -105,7 +89,7 @@ export default class physicsObject extends THREE.Object3D {
         this.angularAcceleration = zeroVector.clone()
         this.angularVelocity = zeroVector.clone()
         this.mass = 0
-        physicsObjects.push(this)
+        objectArray.push(this)
     }
 
     addForce(name, forceVector) {
