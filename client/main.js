@@ -77,8 +77,7 @@ function update() {
 
 function fixedUpdate() {
     //update camera quaternion from players
-    physicsEngine.updateState()
-    player.velocity.copy(controls.movementVector.applyEuler(player.rotation).multiplyScalar(1))
+    player.velocity.copy(controls.movementVector.applyEuler(player.rotation).multiplyScalar(10))
     camera.updateMatrixWorld()
     planets.forEach((planet) => {
         planet.label.updatePosition(planet.position, camera)
