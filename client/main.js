@@ -92,6 +92,10 @@ function render() {
 
 init()
 setInterval(fixedUpdate, 5)
+const physicsTimeStep = 5
+// Running collision detection and state updates asynchronously and different time steps prevents object penetration 
+setInterval(physicsEngine.updateState, physicsTimeStep)
+setInterval(physicsEngine.detectCollisions, physicsTimeStep / 5)
 
 renderer.setAnimationLoop(() => {
     update()
