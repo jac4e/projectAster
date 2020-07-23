@@ -3,7 +3,12 @@ import * as THREE from '/lib/three.module.js'
 export let objectArray = []
 const zeroVector = new THREE.Vector3(0, 0, 0)
 const g = 0.3
-const deltaTime = 0.05
+let deltaTime = 0.05
+
+export function updateDeltaTime() {
+    deltaTime = this.value/100
+    console.log('deltaTime:',deltaTime)
+}
 
 function calculateGravity(objectA, objectB) {
     let positionVector = objectB.position.clone().sub(objectA.position)
