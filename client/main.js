@@ -44,6 +44,14 @@ function init() {
 
     //Game stuff
     universe = new Universe(scene)
+
+    spawnBodies("random",25)
+    player = new Player(0, 0, 500)
+    controls = new Controls(player)
+
+    debugMenu = new UI.debug(physicsEngine.objectArray)
+}
+
 function spawnBodies(spawningType, n) {
     // Evenly space cube
     switch (spawningType){
