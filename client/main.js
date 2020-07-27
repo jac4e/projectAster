@@ -44,26 +44,51 @@ function init() {
 
     //Game stuff
     universe = new Universe(scene)
-    planets = new Array(n)
-    // for (let i = 0; i<n;i++){
-    //     let x = Math.floor(Math.random() * 200) - 100
-    //     let y = Math.floor(Math.random() * 200) - 100
-    //     let z = Math.floor(Math.random() * 200) - 100
-    //     console.log(x)
-    //     planets[i] = new Planet(5,100,new THREE.Vector3(x,y,z))
-    // }
-    // x = 0.7494421910777922289898659 * -5
-    // y = 1.1501789857502275024030202 * -5
-    planets[0] = new Planet(5, 10, new THREE.Vector3(-15, 0, 0))
-    // //planets[0].velocity.copy(new THREE.Vector3(x*-0.5,y*-0.5,0))
-    planets[1] = new Planet(5, 10, new THREE.Vector3(0, 0, 0))
-    // //planets[1].velocity.copy(new THREE.Vector3(x,y,0))
-     planets[2] = new Planet(5, 10, new THREE.Vector3(-7, 10, 0))
-    // //planets[2].velocity.copy(new THREE.Vector3(x*-0.5,y*-0.5,0))
+function spawnBodies(spawningType, n) {
+    // Evenly space cube
+    switch (spawningType){
+        case "cube":
+            let spacing = 30
+            let num = 0
+            planets = new Array(n * n * n)
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    for (let k = 0; k < n; k++) {
+                        planets[num] = new Planet(spacing / 3, 100, new THREE.Vector3(spacing * i, spacing * j, spacing * k))
+                        num += 1
+                    }
+                }
+            }
+            break
+        case "random":
+            planets = new Array(n)
+            for (let i = 0; i < n; i++){
+                planets[i] = new Planet(10, 100, new THREE.Vector3(Math.random()*150 - 75, Math.random()*150 - 75, Math.random()*150 - 75)) 
+            }
+            break
+        case "system":
+            planets = [{
+                radius: 300,
+                mass: 10000,
+                pos: new THREE.Vector3(0,0,0)
+            },
+            {
+                radius: 30,
+                mass: 30 * 3,
+                pos: new THREE.Vector3(800,0,0)
+            }]
+            console.log(planets[1].pos.clone().distanceTo(planets[0].pos))
+            const velocity = new THREE.Vector3(0, Math.sqrt( physicsEngine.g * planets[0].mass / 800 ), 0 )
+            console.log(velocity)
+            planets[0] = new Planet(planets[0].radius, planets[0].mass, planets[0].pos)
+            planets[1] = new Planet(planets[1].radius, planets[1].mass, planets[1].pos)
+            planets[1].velocity = velocity
+            break
+    }
     planets.forEach((planet) => {
-        planet.label = new UI.Label()
-        planet.label.updateInner([planet.uuid])
         scene.add(planet)
+        // planet.label = new UI.Label()
+        // planet.label.updateInner(planet.uuid)
     })
     player = new Player(0, 0, 50)
     controls = new Controls(player)
